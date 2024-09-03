@@ -1,9 +1,5 @@
-import {
-  CommentCard,
-  CommentInputBox,
-  ReplyInputBox,
-} from "@/components/cards";
-import ReplyCard from "@/components/cards/ReplyCard";
+import { CommentInputBox } from "@/components/cards";
+import CommentsList from "@/components/comment/CommentList";
 import SignInButton from "@/components/core/SignInButton";
 import SignOutButton from "@/components/core/SignOutButton";
 import { useAuth } from "@/context/AuthContext";
@@ -24,10 +20,7 @@ export default function Home() {
           </div>
         </div>
         <CommentInputBox />
-        {/* <CommentInput /> */}
-        <CommentCard />
-        <ReplyInputBox />
-        <ReplyCard />
+        <CommentsList />
       </div>
     </section>
   );

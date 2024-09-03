@@ -1,49 +1,88 @@
-import {
-  AddReaction,
-  AddReactionOutlined,
-  SentimentVerySatisfied,
-  ThumbUp,
-} from "@mui/icons-material";
-import React from "react";
+import { useState } from "react";
+import { formatDistanceToNow } from "date-fns";
+import ReplyForm from "./ReplyForm";
+import { Comment } from "@/types/comment";
 
-const CommentCard = () => {
+interface CommentCardProps {
+  comment: Comment;
+  onPostReply: (commentId: string, replyText: string) => void;
+}
+
+const CommentCard: React.FC<CommentCardProps> = ({ comment, onPostReply }) => {
+  const [showReplyForm, setShowReplyForm] = useState(false);
+  const [showReplies, setShowReplies] = useState(false);
+
+  const timeAgo = formatDistanceToNow(comment.createdAt.toDate(), {
+    addSuffix: true,
+  });
+
+  const handleReply = async (replyText: string) => {
+    await onPostReply(comment.id, replyText);
+    setShowReplyForm(false);
+  };
+
+  console.log(".....>>>>", comment);
+
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 p-4 bg-white shadow-md rounded-lg relative">
       <div className="flex items-center gap-2">
         <img
-          src="/profile2.jpg"
+          src={comment.userPhoto || "/default-avatar.png"}
+          alt={comment.userName || "Anonymous"}
           className="rounded-full h-8 w-8 border object-center object-cover shadow-md"
         />
-        <p className="text-gray-700">John nash</p>
+        <p className="text-gray-700">{comment.userName || "Anonymous"}</p>
       </div>
-      <p className="text-gray-600 text-md">
-        Words,written or spoken, are the main form of communication for most
-        people. When commenting on an Instagram reel, be as creative as
-        possible.
-      </p>
-      <img
-        src="/profile1.jpeg"
-        className="h-20 w-20 rounded-xl object-center object-cover"
-      />
-      {/* Emoji and reply and count and time likes part  */}
+      <p
+        className="text-gray-600 text-md"
+        dangerouslySetInnerHTML={{ __html: comment.text }}
+      ></p>
+      {comment.imageUrl && (
+        <img
+          src={comment.imageUrl}
+          alt="Attachment"
+          className="h-20 w-20 rounded-xl object-center object-cover"
+        />
+      )}
       <div className="flex items-center gap-2 text-gray-500">
-        <AddReactionOutlined className="text-gray-500" />
-        <div className="flex justify-center items-center">
-          <span className="rounded-2xl px-2 border border-gray-300">
-            <ThumbUp className="text-yellow-400 !text-sm" />
-          </span>
-          <span className="rounded-2xl px-2 border border-gray-300">
-            <SentimentVerySatisfied className="text-yellow-400 !text-sm" />
-          </span>
-        </div>
-        <span className="text-sm inline-block border-l pl-2 h-4 border-gray-300">
+        <button
+          onClick={() => setShowReplyForm((prev) => !prev)}
+          className="text-blue-500 text-sm"
+        >
           Reply
-        </span>
+        </button>
         <span className="text-sm inline-block border-l pl-2 h-4 border-gray-300">
-          2 min
+          {timeAgo}
         </span>
       </div>
-      <hr />
+
+      {showReplyForm && (
+        <ReplyForm
+          commentId={comment.id}
+          onPostReply={handleReply}
+          onCancel={() => setShowReplyForm(false)}
+        />
+      )}
+
+      {comment.replies && comment.replies.length > 0 && showReplies && (
+        <div className="ml-6 mt-3 space-y-3 border-l border-gray-300 pl-3">
+          {comment.replies.map((reply) => (
+            <CommentCard
+              key={reply.id}
+              comment={reply}
+              onPostReply={onPostReply}
+            />
+          ))}
+        </div>
+      )}
+      {comment.replies && comment.replies.length > 0 && (
+        <button
+          onClick={() => setShowReplies((prev) => !prev)}
+          className="mt-2 text-blue-500 text-sm"
+        >
+          {showReplies ? "Hide Replies" : "Show Replies"}
+        </button>
+      )}
     </div>
   );
 };
