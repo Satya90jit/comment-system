@@ -12,7 +12,7 @@ import {
 import { db } from "@/lib/firebaseConfig";
 import { fetchReplies, postReply } from "@/lib/firebaseUtils";
 import { Comment } from "@/types/comment";
-import CommentCard from "../cards/CommentCard"; // Ensure the correct import path
+import CommentCard from "./CommentCard"; // Ensure the correct import path
 import { useAuth } from "@/context/AuthContext";
 
 const CommentsList = () => {

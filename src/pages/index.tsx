@@ -1,15 +1,11 @@
-import { CommentInputBox } from "@/components/cards";
-import CommentsList from "@/components/comment/CommentList";
-import SignInButton from "@/components/core/SignInButton";
-import SignOutButton from "@/components/core/SignOutButton";
-import { useAuth } from "@/context/AuthContext";
+import { CommentInputBox, CommentsList } from "@/components/comment";
+import { Authentication } from "@/components/core";
 
 export default function Home() {
-  const { user }: any = useAuth();
   return (
     <section className="mx-auto lg:px-60 lg:my-14 my-3">
       <div className="mb-2 px-2">
-        {!user ? <SignInButton /> : <SignOutButton />}
+        <Authentication />
       </div>
       <div className="border-2 border-gray-300 rounded-lg p-8 space-y-6">
         <div className="flex justify-between">

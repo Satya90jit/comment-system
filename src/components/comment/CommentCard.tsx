@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
-import ReplyForm from "./ReplyForm";
+import ReplyForm from "../reply/ReplyForm";
 import { Comment } from "@/types/comment";
 
 interface CommentCardProps {
