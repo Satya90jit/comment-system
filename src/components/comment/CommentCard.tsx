@@ -31,7 +31,7 @@ const CommentCard: React.FC<CommentCardProps> = ({
   };
 
   return (
-    <div className="space-y-3 p-4 bg-white shadow-md rounded-lg relative">
+    <div className="space-y-3 py-4 px-2 bg-white border-b border-gray-300/50  last:border-none rounded-lg relative">
       <div className="flex items-center gap-2">
         <img
           src={comment.userPhoto || "/default-avatar.png"}
@@ -84,7 +84,7 @@ const CommentCard: React.FC<CommentCardProps> = ({
           </button>
 
           {showReplies && (
-            <div className="ml-6 mt-3 space-y-3 border-l border-gray-300 pl-3">
+            <div className="ml-1 mt-3 space-y-3 border-l border-gray-300 pl-3">
               {comment.replies.map((reply) => (
                 <CommentCard
                   key={reply.id}
