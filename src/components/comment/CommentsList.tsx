@@ -57,14 +57,14 @@ const CommentsList = () => {
     try {
       const replyData = {
         text: replyText,
-        userName: user?.displayName || "Anonymous", // Replace with actual user data
+        userName: user?.displayName || "Anonymous",
         userPhoto: user?.photoURL || "/default-avatar.png",
         createdAt: serverTimestamp(),
       };
 
+      let repliesRef;
       if (parentReplyId) {
-        // Post reply to a reply (nested)
-        const repliesRef = collection(
+        repliesRef = collection(
           db,
           "comments",
           commentId,
@@ -72,12 +72,11 @@ const CommentsList = () => {
           parentReplyId,
           "replies"
         );
-        await addDoc(repliesRef, replyData);
       } else {
-        // Post reply to a comment
-        const repliesRef = collection(db, "comments", commentId, "replies");
-        await addDoc(repliesRef, replyData);
+        repliesRef = collection(db, "comments", commentId, "replies");
       }
+
+      await addDoc(repliesRef, replyData);
     } catch (error) {
       console.error("Error posting reply:", error);
     }

@@ -1,21 +1,15 @@
+import { CircularProgress } from "@mui/material";
 import { useState } from "react";
 
-interface ReplyFormProps {
-  commentId: string;
-  onPostReply: (commentId: string, replyText: string) => void;
-  onCancel: () => void;
-}
-
-const ReplyForm: React.FC<ReplyFormProps> = ({
-  commentId,
-  onPostReply,
-  onCancel,
-}) => {
+const ReplyForm = ({ commentId, onPostReply, onCancel }: any) => {
   const [replyText, setReplyText] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleReplySubmit = async () => {
     if (replyText.trim()) {
+      setLoading(true);
       await onPostReply(commentId, replyText);
+      setLoading(false);
       setReplyText("");
     }
   };
@@ -39,8 +33,9 @@ const ReplyForm: React.FC<ReplyFormProps> = ({
         <button
           onClick={handleReplySubmit}
           className="px-4 py-1 text-sm bg-blue-500 text-white rounded-lg"
+          disabled={loading}
         >
-          Reply
+          {loading ? <CircularProgress size={14} color="inherit" /> : "Reply"}
         </button>
       </div>
     </div>

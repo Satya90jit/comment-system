@@ -10,9 +10,14 @@ interface CommentCardProps {
     replyText: string,
     parentReplyId: any
   ) => void;
+  depth?: number; // Add depth prop to track the level of the reply
 }
 
-const CommentCard: React.FC<CommentCardProps> = ({ comment, onPostReply }) => {
+const CommentCard: React.FC<CommentCardProps> = ({
+  comment,
+  onPostReply,
+  depth = 0,
+}) => {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
 
@@ -47,12 +52,15 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onPostReply }) => {
         />
       )}
       <div className="flex items-center gap-2 text-gray-500">
-        <button
-          onClick={() => setShowReplyForm((prev) => !prev)}
-          className="text-blue-500 text-sm"
-        >
-          Reply
-        </button>
+        {/* Hide the Reply button if it's the last level (depth = 2) */}
+        {depth < 2 && (
+          <button
+            onClick={() => setShowReplyForm((prev) => !prev)}
+            className="text-blue-500 text-sm"
+          >
+            Reply
+          </button>
+        )}
         <span className="text-sm inline-block border-l pl-2 h-4 border-gray-300">
           {timeAgo}
         </span>
@@ -61,7 +69,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onPostReply }) => {
       {showReplyForm && (
         <ReplyForm
           commentId={comment.id}
-          onPostReply={(replyText) => handleReply(replyText, comment.id)}
+          onPostReply={(replyText: any) => handleReply(replyText, comment.id)}
           onCancel={() => setShowReplyForm(false)}
         />
       )}
@@ -82,6 +90,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onPostReply }) => {
                   key={reply.id}
                   comment={reply}
                   onPostReply={onPostReply}
+                  depth={depth + 1} // Increase depth for each nested reply
                 />
               ))}
             </div>
