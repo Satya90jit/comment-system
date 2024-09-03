@@ -6,6 +6,8 @@ import {
   onSnapshot,
   DocumentData,
   QuerySnapshot,
+  addDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import { db } from "@/lib/firebaseConfig";
 import { fetchReplies, postReply } from "@/lib/firebaseUtils";
@@ -47,29 +49,37 @@ const CommentsList = () => {
     return () => unsubscribe();
   }, []);
 
-  const handlePostReply = async (commentId: string, replyText: string) => {
-    if (!user) {
-      setError("You must be signed in to post a reply.");
-      return;
-    }
-
-    const replyData: Omit<Comment, "id"> = {
-      userName: user.displayName || "Anonymous",
-      userPhoto: user.photoURL || "/default-avatar.png",
-      text: replyText,
-      imageUrl: null,
-      createdAt: {
-        seconds: Math.floor(Date.now() / 1000),
-        nanoseconds: 0,
-        toDate: () => new Date(),
-      },
-    };
-
+  const handlePostReply = async (
+    commentId: string,
+    replyText: string,
+    parentReplyId: string | null = null
+  ) => {
     try {
-      await postReply(commentId, replyData);
-    } catch (err) {
-      console.error("Error posting reply: ", err);
-      setError("Failed to post reply. Please try again.");
+      const replyData = {
+        text: replyText,
+        userName: user?.displayName || "Anonymous", // Replace with actual user data
+        userPhoto: user?.photoURL || "/default-avatar.png",
+        createdAt: serverTimestamp(),
+      };
+
+      if (parentReplyId) {
+        // Post reply to a reply (nested)
+        const repliesRef = collection(
+          db,
+          "comments",
+          commentId,
+          "replies",
+          parentReplyId,
+          "replies"
+        );
+        await addDoc(repliesRef, replyData);
+      } else {
+        // Post reply to a comment
+        const repliesRef = collection(db, "comments", commentId, "replies");
+        await addDoc(repliesRef, replyData);
+      }
+    } catch (error) {
+      console.error("Error posting reply:", error);
     }
   };
 

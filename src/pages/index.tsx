@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 export default function Home() {
   const { user }: any = useAuth();
   return (
-    <section className="mx-auto px-60 my-14">
+    <section className="mx-auto lg:px-60 lg:my-14 my-3">
       <div className="mb-2 px-2">
         {!user ? <SignInButton /> : <SignOutButton />}
       </div>

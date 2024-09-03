@@ -5,7 +5,11 @@ import { Comment } from "@/types/comment";
 
 interface CommentCardProps {
   comment: Comment;
-  onPostReply: (commentId: string, replyText: string) => void;
+  onPostReply: (
+    commentId: string,
+    replyText: string,
+    parentReplyId: any
+  ) => void;
 }
 
 const CommentCard: React.FC<CommentCardProps> = ({ comment, onPostReply }) => {
@@ -16,12 +20,10 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onPostReply }) => {
     addSuffix: true,
   });
 
-  const handleReply = async (replyText: string) => {
-    await onPostReply(comment.id, replyText);
+  const handleReply = async (replyText: string, parentReplyId?: string) => {
+    await onPostReply(comment.id, replyText, parentReplyId);
     setShowReplyForm(false);
   };
-
-  console.log(".....>>>>", comment);
 
   return (
     <div className="space-y-3 p-4 bg-white shadow-md rounded-lg relative">
@@ -59,29 +61,32 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onPostReply }) => {
       {showReplyForm && (
         <ReplyForm
           commentId={comment.id}
-          onPostReply={handleReply}
+          onPostReply={(replyText) => handleReply(replyText, comment.id)}
           onCancel={() => setShowReplyForm(false)}
         />
       )}
 
-      {comment.replies && comment.replies.length > 0 && showReplies && (
-        <div className="ml-6 mt-3 space-y-3 border-l border-gray-300 pl-3">
-          {comment.replies.map((reply) => (
-            <CommentCard
-              key={reply.id}
-              comment={reply}
-              onPostReply={onPostReply}
-            />
-          ))}
-        </div>
-      )}
       {comment.replies && comment.replies.length > 0 && (
-        <button
-          onClick={() => setShowReplies((prev) => !prev)}
-          className="mt-2 text-blue-500 text-sm"
-        >
-          {showReplies ? "Hide Replies" : "Show Replies"}
-        </button>
+        <div>
+          <button
+            onClick={() => setShowReplies((prev) => !prev)}
+            className="mt-2 text-blue-500 text-sm"
+          >
+            {showReplies ? "Hide Replies" : "Show Replies"}
+          </button>
+
+          {showReplies && (
+            <div className="ml-6 mt-3 space-y-3 border-l border-gray-300 pl-3">
+              {comment.replies.map((reply) => (
+                <CommentCard
+                  key={reply.id}
+                  comment={reply}
+                  onPostReply={onPostReply}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
