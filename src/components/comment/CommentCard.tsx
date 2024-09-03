@@ -48,7 +48,7 @@ const CommentCard: React.FC<CommentCardProps> = ({
         <img
           src={comment.imageUrl}
           alt="Attachment"
-          className="h-20 w-20 rounded-xl object-center object-cover"
+          className="h-20 w-20 rounded-xl object-center object-cover border shadow-sm"
         />
       )}
       <div className="flex items-center gap-2 text-gray-500">
